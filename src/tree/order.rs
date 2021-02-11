@@ -10,8 +10,7 @@ pub enum Order {
     PostOrder,
 }
 
-
-pub fn traversal<T: Clone>(root: &OptBinaryNode<T>, order: Order) -> Vec<T> {
+pub fn bfs<T: Clone>(root: &OptBinaryNode<T>, order: Order) -> Vec<T> {
     let mut stack: Vec<OptBinaryNode<T>> = Vec::new();
     let mut result: Vec<T> = Vec::new();
     if root.is_some() { stack.push(root.clone()) }
@@ -59,7 +58,7 @@ pub fn traversal<T: Clone>(root: &OptBinaryNode<T>, order: Order) -> Vec<T> {
     result
 }
 
-pub fn level_traversal<T: Clone>(root: &OptBinaryNode<T>) -> Vec<Vec<T>> {
+pub fn level_bfs<T: Clone>(root: &OptBinaryNode<T>) -> Vec<Vec<T>> {
     let mut queue: Vec<OptBinaryNode<T>> = Vec::new();
     let mut result: Vec<Vec<T>> = Vec::new();
     if root.is_some() { queue.push(root.clone()) }
@@ -88,7 +87,7 @@ mod tests {
     use std::rc::Rc;
 
     use crate::tree::{BinaryNode, OptBinaryNode};
-    use crate::tree::order::{level_traversal, Order, traversal};
+    use crate::tree::order::{bfs, level_bfs, Order};
 
     fn tree() -> OptBinaryNode<i32> {
         let mut tn1 = BinaryNode::new(1);
@@ -103,18 +102,18 @@ mod tests {
     }
 
     #[test]
-    fn inorder_traversal() {
+    fn inorder_bfs() {
         assert_eq!(2 + 2, 4);
         let root = tree();
-        let res = traversal(&root, Order::InOrder);
-        println!("=================={:?}", res);
+        let res = bfs(&root, Order::InOrder);
+        println!("inorder_bfs:=================={:?}", res);
     }
 
     #[test]
-    fn levelorder_traversal() {
+    fn levelorder_bfs() {
         assert_eq!(2 + 2, 4);
         let root = tree();
-        let res = level_traversal(&root);
-        println!("=================={:?}", res);
+        let res = level_bfs(&root);
+        println!("levelorder_bfs:=================={:?}", res);
     }
 }
