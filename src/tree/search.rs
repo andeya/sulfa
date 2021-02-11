@@ -1,3 +1,8 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
+use crate::tree::{BinaryNode, OptBinaryNode};
+
 // catalan calculate how many binary search trees can be formed by node_num nodes
 pub fn catalan(node_num: u64) -> u64 {
     let mut c: f64 = 1.0;
@@ -7,8 +12,38 @@ pub fn catalan(node_num: u64) -> u64 {
     c as u64
 }
 
+// generate_all generate all binary search trees that can be combined by asc_values.
+pub fn generate_all<T: Clone>(asc_values: &Vec<T>) -> Vec<OptBinaryNode<T>> {
+    generate_all_help(asc_values, 1, asc_values.len())
+}
+
+fn generate_all_help<T: Clone>(asc_values: &Vec<T>, start: usize, end: usize) -> Vec<OptBinaryNode<T>> {
+    let mut trees = Vec::new();
+    if start > end {
+        trees.push(None);
+        return trees;
+    }
+
+    for k in start..=end {
+        let left_trees = generate_all_help(asc_values, start, k - 1);
+        let right_trees = generate_all_help(asc_values, k + 1, end);
+        for i in left_trees.iter() {
+            for j in right_trees.iter() {
+                let mut node = BinaryNode::new(asc_values.get(k - 1).unwrap().clone());
+                node.left = i.clone();
+                node.right = j.clone();
+                trees.push(Some(Rc::new(RefCell::new(node))));
+            }
+        }
+    }
+
+    trees
+}
+
 #[cfg(test)]
 mod tests {
+    use crate::tree::search::generate_all;
+
     use super::catalan;
 
     #[test]
@@ -17,5 +52,11 @@ mod tests {
         assert_eq!(2, catalan(2));
         assert_eq!(5, catalan(3));
         assert_eq!(6564120420, catalan(20))
+    }
+
+    #[test]
+    fn test_generate_all() {
+        let asc_values = (1..=5).collect::<Vec<_>>();
+        println!("{:?}", generate_all(&asc_values));
     }
 }
