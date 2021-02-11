@@ -2,6 +2,7 @@ pub use node::*;
 
 pub mod order;
 pub mod symmetric;
+pub mod search;
 
 mod node {
     use std::cell::RefCell;
