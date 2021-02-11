@@ -1,8 +1,7 @@
 use std::borrow::Borrow;
 use std::cell::RefCell;
-use std::rc::Rc;
 
-use super::node::{BinaryNode, OptBinaryNode};
+use super::node::OptBinaryNode;
 
 #[derive(Clone, Copy)]
 pub enum Order {
@@ -10,6 +9,7 @@ pub enum Order {
     PreOrder,
     PostOrder,
 }
+
 
 pub fn traversal<T: Clone>(root: &OptBinaryNode<T>, order: Order) -> Vec<T> {
     let mut stack: Vec<OptBinaryNode<T>> = Vec::new();
@@ -59,18 +59,62 @@ pub fn traversal<T: Clone>(root: &OptBinaryNode<T>, order: Order) -> Vec<T> {
     result
 }
 
-#[test]
-fn test_inorder_traversal() {
-    assert_eq!(2 + 2, 4);
-    let mut tn1 = BinaryNode::new(1);
-    let mut tn3 = BinaryNode::new(3);
-    let tn2 = BinaryNode::new(2);
-    tn3.right = Some(Rc::new(RefCell::new(tn2)));
-    tn1.left = Some(Rc::new(RefCell::new(tn3)));
-    let root = Some(Rc::new(RefCell::new(tn1)));
-    let res = traversal(&root, Order::InOrder);
-    println!("=================={:?}", res);
+pub fn level_traversal<T: Clone>(root: &OptBinaryNode<T>) -> Vec<Vec<T>> {
+    let mut queue: Vec<OptBinaryNode<T>> = Vec::new();
+    let mut result: Vec<Vec<T>> = Vec::new();
+    if root.is_some() { queue.push(root.clone()) }
+    while !queue.is_empty() {
+        let mut level: Vec<T> = Vec::new();
+        for _ in 0..queue.len() {
+            let node = queue.remove(0);
+            let node = RefCell::borrow(node.as_ref().unwrap());
+            level.push(node.val.clone());
+            if node.left.is_some() {
+                queue.push(node.left.clone())
+            }
+            if node.right.is_some() {
+                queue.push(node.right.clone())
+            }
+        }
+        result.push(level);
+    }
+    result
 }
 
 
+#[cfg(test)]
+mod tests {
+    use std::cell::RefCell;
+    use std::rc::Rc;
 
+    use crate::tree::{BinaryNode, OptBinaryNode};
+    use crate::tree::order::{level_traversal, Order, traversal};
+
+    fn tree() -> OptBinaryNode<i32> {
+        let mut tn1 = BinaryNode::new(1);
+        let mut tn3 = BinaryNode::new(3);
+        let tn4 = BinaryNode::new(4);
+        let tn2 = BinaryNode::new(2);
+        tn3.right = Some(Rc::new(RefCell::new(tn2)));
+        tn1.left = Some(Rc::new(RefCell::new(tn3)));
+        tn1.right = Some(Rc::new(RefCell::new(tn4)));
+        let root = Some(Rc::new(RefCell::new(tn1)));
+        root
+    }
+
+    #[test]
+    fn inorder_traversal() {
+        assert_eq!(2 + 2, 4);
+        let root = tree();
+        let res = traversal(&root, Order::InOrder);
+        println!("=================={:?}", res);
+    }
+
+    #[test]
+    fn levelorder_traversal() {
+        assert_eq!(2 + 2, 4);
+        let root = tree();
+        let res = level_traversal(&root);
+        println!("=================={:?}", res);
+    }
+}
