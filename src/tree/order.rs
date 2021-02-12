@@ -80,7 +80,7 @@ pub fn level_bfs<T: Clone>(root: &OptBinaryNode<T>) -> Vec<Vec<T>> {
     result
 }
 
-pub fn max_depth_bfs<T>(root: &OptBinaryNode<T>) -> i32 {
+pub fn max_depth_dfs<T>(root: &OptBinaryNode<T>) -> i32 {
     let mut max_depth = 0;
     max_depth_help(root, 1, &mut max_depth);
     max_depth
@@ -99,13 +99,37 @@ fn max_depth_help<T>(root: &OptBinaryNode<T>, level: i32, max_depth: &mut i32) {
     }
 }
 
+pub fn min_depth_bfs<T>(root: &OptBinaryNode<T>) -> i32 {
+    let mut depth: i32 = 0;
+    if root.is_none() { return depth }
+    let mut queue: Vec<OptBinaryNode<T>> = Vec::new();
+    queue.push(root.clone());
+    while !queue.is_empty() {
+        depth += 1;
+        for _ in 0..queue.len() {
+            let node = queue.remove(0);
+            let node = RefCell::borrow(node.as_ref().unwrap());
+            if node.left.is_none() && node.right.is_none() {
+                return depth;
+            }
+            if node.left.is_some() {
+                queue.push(node.left.clone());
+            }
+            if node.right.is_some() {
+                queue.push(node.right.clone());
+            }
+        }
+    }
+    return depth;
+}
+
 #[cfg(test)]
 mod tests {
     use std::cell::RefCell;
     use std::rc::Rc;
 
     use crate::tree::{BinaryNode, OptBinaryNode};
-    use crate::tree::order::{bfs, level_bfs, max_depth_bfs, Order};
+    use crate::tree::order::{bfs, level_bfs, max_depth_dfs, min_depth_bfs, Order};
 
     fn tree() -> OptBinaryNode<i32> {
         let mut tn1 = BinaryNode::new(1);
@@ -138,7 +162,14 @@ mod tests {
     #[test]
     fn max_depth() {
         let root = tree();
-        let res = max_depth_bfs(&root);
+        let res = max_depth_dfs(&root);
+        println!("max_depth:=================={:?}", res);
+    }
+
+    #[test]
+    fn min_depth() {
+        let root = tree();
+        let res = min_depth_bfs(&root);
         println!("max_depth:=================={:?}", res);
     }
 }
