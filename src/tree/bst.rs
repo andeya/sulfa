@@ -1,3 +1,4 @@
+use std::borrow::Borrow;
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -40,9 +41,34 @@ fn generate_all_help<T: Clone>(asc_values: &Vec<T>, start: usize, end: usize) ->
     trees
 }
 
+// is_valid determine whether it is a binary search tree.
+pub fn is_valid<T: Clone + PartialOrd>(root: &OptBinaryNode<T>) -> bool {
+    is_valid_bst(root, &mut None)
+}
+
+fn is_valid_bst<T: Clone + PartialOrd>(root: &OptBinaryNode<T>, last_val: &mut Option<T>) -> bool {
+    return match root {
+        None => true,
+        Some(node) => {
+            let node = RefCell::borrow(node);
+            if !is_valid_bst((node.left).borrow(), last_val) {
+                return false
+            }
+            if last_val.is_some() && node.val <= *last_val.as_ref().unwrap() {
+                return false
+            }
+            last_val.replace(node.val.clone());
+            if !is_valid_bst((node.right).borrow(), last_val) {
+                return false
+            }
+            true
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::tree::search::generate_all;
+    use crate::tree::bst::generate_all;
 
     use super::catalan;
 
