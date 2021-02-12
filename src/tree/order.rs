@@ -99,6 +99,7 @@ fn max_depth_help<T>(root: &OptBinaryNode<T>, level: i32, max_depth: &mut i32) {
     }
 }
 
+// min_depth_bfs calculate the number of nodes on the shortest path from the root node to the nearest leaf node.
 pub fn min_depth_bfs<T>(root: &OptBinaryNode<T>) -> i32 {
     let mut depth: i32 = 0;
     if root.is_none() { return depth }
