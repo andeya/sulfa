@@ -2,6 +2,7 @@
 
 use std::borrow::Borrow;
 use std::cell::RefCell;
+use std::cmp::max;
 
 use super::node::OptBinaryNode;
 
@@ -83,22 +84,14 @@ pub fn level_bfs<T: Clone>(root: &OptBinaryNode<T>) -> Vec<Vec<T>> {
 }
 
 pub fn max_depth_dfs<T>(root: &OptBinaryNode<T>) -> i32 {
-    let mut max_depth = 0;
-    max_depth_help(root, 1, &mut max_depth);
-    max_depth
-}
-
-fn max_depth_help<T>(root: &OptBinaryNode<T>, level: i32, max_depth: &mut i32) {
-    match root {
-        None => return,
+    return match root {
+        None => 0,
         Some(node) => {
-            if *max_depth < level {
-                *max_depth = level.clone();
-            }
-            max_depth_help(RefCell::borrow(node).left.borrow(), level.clone() + 1, max_depth);
-            max_depth_help(RefCell::borrow(node).right.borrow(), level + 1, max_depth);
+            let d1 = max_depth_dfs(RefCell::borrow(node).left.borrow());
+            let d2 = max_depth_dfs(RefCell::borrow(node).right.borrow());
+            max(d1, d2) + 1
         }
-    }
+    };
 }
 
 // min_depth_bfs calculate the number of nodes on the shortest path from the root node to the nearest leaf node.
