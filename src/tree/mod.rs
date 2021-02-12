@@ -1,8 +1,11 @@
+//! Binary Tree
+
 pub use node::*;
 
 pub mod order;
 pub mod symmetric;
 pub mod bst;
+pub mod avl;
 
 mod node {
     use std::cell::RefCell;

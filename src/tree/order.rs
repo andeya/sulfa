@@ -1,3 +1,5 @@
+//! Traverse the binary tree
+
 use std::borrow::Borrow;
 use std::cell::RefCell;
 

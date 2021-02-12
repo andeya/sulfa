@@ -1,3 +1,5 @@
+//! Binary Search Tree
+
 use std::borrow::Borrow;
 use std::cell::RefCell;
 use std::rc::Rc;

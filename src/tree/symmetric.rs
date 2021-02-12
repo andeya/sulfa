@@ -1,3 +1,5 @@
+//! Symmetric Binary Tree
+
 use crate::tree::OptBinaryNode;
 
 pub fn is_symmetric<T: PartialEq>(root: OptBinaryNode<T>) -> bool {
