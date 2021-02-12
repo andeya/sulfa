@@ -1,6 +1,6 @@
 [package]
 name = "sulfa"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["henrylee2cn <henrylee2cn@gmail.com>"]
 edition = "2018"
 description = "basic algorithm library implemented by rust"
