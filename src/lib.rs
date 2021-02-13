@@ -1,4 +1,5 @@
 pub mod tree;
+pub mod array;
 
 #[cfg(test)]
 mod tests {
