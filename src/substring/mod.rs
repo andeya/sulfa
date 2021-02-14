@@ -61,9 +61,95 @@ pub fn length_of_longest_substring(s: String) -> usize {
     max(max_len, set.len())
 }
 
+
+//Given two sorted arrays nums1 and nums2 of size m and n respectively, return t
+//he median of the two sorted arrays.
+//
+// Follow up: The overall run time complexity should be O(log (m+n)).
+//
+//
+// Example 1:
+//
+//
+//Input: nums1 = [1,3], nums2 = [2]
+//Output: 2.00000
+//Explanation: merged array = [1,2,3] and median is 2.
+//
+//
+// Example 2:
+//
+//
+//Input: nums1 = [1,2], nums2 = [3,4]
+//Output: 2.50000
+//Explanation: merged array = [1,2,3,4] and median is (2 + 3) / 2 = 2.5.
+//
+//
+// Example 3:
+//
+//
+//Input: nums1 = [0,0], nums2 = [0,0]
+//Output: 0.00000
+//
+//
+// Example 4:
+//
+//
+//Input: nums1 = [], nums2 = [1]
+//Output: 1.00000
+//
+//
+// Example 5:
+//
+//
+//Input: nums1 = [2], nums2 = []
+//Output: 2.00000
+//
+//
+//
+// Constraints:
+//
+//
+// nums1.length == m
+// nums2.length == n
+// 0 <= m <= 1000
+// 0 <= n <= 1000
+// 1 <= m + n <= 2000
+// -106 <= nums1[i], nums2[i] <= 106
+//
+pub fn longest_palindrome(s: String) -> String {
+    if s.len() <= 1 {
+        return s;
+    }
+    let (mut idx, mut l, mut r) = (0 as usize, 0 as usize, 0 as usize);
+    let mut max_length = 0 as usize;
+    let sbytes = s.as_bytes();
+    while idx < s.len() - max_length / 2 {
+        let mut left = idx;
+        let mut right = idx;
+        while left > 0 && sbytes[left - 1] == sbytes[idx] {
+            left -= 1;
+        }
+        while right < s.len() - 1 && sbytes[right + 1] == sbytes[idx] {
+            right += 1;
+        }
+        idx = right + 1;
+        while left > 0 && right < s.len() - 1 && sbytes[left - 1] == sbytes[right + 1] {
+            left -= 1;
+            right += 1;
+        }
+        if max_length < right - left + 1 {
+            max_length = right - left + 1;
+            l = left;
+            r = right;
+        }
+    }
+    String::from(&s[l..=r])
+}
+
+
 #[cfg(test)]
 mod tests {
-    use crate::substring::length_of_longest_substring;
+    use crate::substring::{length_of_longest_substring, longest_palindrome};
 
     #[test]
     fn test_length_of_longest_substring() {
@@ -72,5 +158,12 @@ mod tests {
         assert_eq!(3, length_of_longest_substring("pwwkew".to_string()));
         assert_eq!(3, length_of_longest_substring("abcabcbb".to_string()));
         assert_eq!(7, length_of_longest_substring("bpfbhmipx".to_string()));
+    }
+
+    #[test]
+    fn test_longest_palindrome() {
+        assert_eq!(2 + 2, 4);
+        assert_eq!("xaabacxcabaax", longest_palindrome("xaabacxcabaaxcabaax".to_string()));
+        assert_eq!("bab", longest_palindrome("babad".to_string()));
     }
 }
