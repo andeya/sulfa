@@ -1,6 +1,6 @@
 pub mod tree;
 pub mod array;
-pub mod substring;
+pub mod basic_type;
 
 #[cfg(test)]
 mod tests {

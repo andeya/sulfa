@@ -1,5 +1,3 @@
-use std::cmp::max;
-
 //Given a string s, find the length of the longest substring without repeating c
 //haracters.
 //
@@ -58,7 +56,7 @@ pub fn length_of_longest_substring(s: String) -> usize {
         }
         set.push(x);
     }
-    max(max_len, set.len())
+    max_len.max(set.len())
 }
 
 
@@ -144,26 +142,4 @@ pub fn longest_palindrome(s: String) -> String {
         }
     }
     String::from(&s[l..=r])
-}
-
-
-#[cfg(test)]
-mod tests {
-    use crate::substring::{length_of_longest_substring, longest_palindrome};
-
-    #[test]
-    fn test_length_of_longest_substring() {
-        assert_eq!(2 + 2, 4);
-        assert_eq!(3, length_of_longest_substring("ynyo".to_string()));
-        assert_eq!(3, length_of_longest_substring("pwwkew".to_string()));
-        assert_eq!(3, length_of_longest_substring("abcabcbb".to_string()));
-        assert_eq!(7, length_of_longest_substring("bpfbhmipx".to_string()));
-    }
-
-    #[test]
-    fn test_longest_palindrome() {
-        assert_eq!(2 + 2, 4);
-        assert_eq!("xaabacxcabaax", longest_palindrome("xaabacxcabaaxcabaax".to_string()));
-        assert_eq!("bab", longest_palindrome("babad".to_string()));
-    }
 }
