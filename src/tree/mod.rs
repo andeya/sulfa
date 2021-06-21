@@ -7,6 +7,7 @@ pub mod symmetric;
 pub mod bst;
 pub mod avl;
 pub mod depth;
+pub mod heap;
 
 mod node {
     use std::cell::RefCell;
