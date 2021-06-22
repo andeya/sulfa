@@ -46,12 +46,12 @@ impl Heap {
         Heap(slice).as_max_heap()
     }
     pub fn delete_node(mut self, i: usize) -> Self {
-        if i == 0 || i > self.size() {
+        if i >= self.size() {
             return self;
         }
-        self.swap_uncheck(i, self.size());
+        self.swap_uncheck(i + 1, self.size());
         self.0.pop();
-        self.max_shift_down_uncheck(i);
+        self.max_shift_down_uncheck(i + 1);
         self
     }
     /// O(log(n)
