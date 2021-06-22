@@ -1,18 +1,21 @@
 #[derive(PartialEq, Debug)]
 pub struct Heap {
     slice: Vec<i64>,
-    is_max: bool,
+    is_max_heap: bool,
 }
 
 impl Heap {
-    pub fn new(slice: Vec<i64>, is_max: bool) -> Self {
-        Heap { slice, is_max }.as_heap()
+    pub fn new(slice: Vec<i64>, is_max_heap: bool) -> Self {
+        Heap { slice, is_max_heap }.as_heap()
     }
-    pub fn is_max(&self) -> bool {
-        self.is_max
+    pub fn is_max_heap(&self) -> bool {
+        self.is_max_heap
     }
-    pub fn to_heap(mut self, is_max: bool) -> Self {
-        self.is_max = is_max;
+    pub fn into_heap(mut self, is_max_heap: bool) -> Self {
+        if self.is_max_heap == is_max_heap {
+            return self;
+        }
+        self.is_max_heap = is_max_heap;
         self.as_heap()
     }
     fn as_heap(mut self) -> Self {
@@ -36,7 +39,7 @@ impl Heap {
         self
     }
     /// O(nlog(n))
-    pub fn sort(mut self) -> Vec<i64> {
+    pub fn sort(mut self, reverse: bool) -> Vec<i64> {
         let raw_size = self.size();
         while self.size() > 0 {
             self.swap_uncheck(1, self.size());
@@ -44,7 +47,7 @@ impl Heap {
             self = self.as_heap();
         }
         unsafe { self.slice.set_len(raw_size) }
-        if !self.is_max {
+        if (self.is_max_heap && reverse) || (!self.is_max_heap && !reverse) {
             self.slice.reverse()
         }
         return self.slice;
@@ -55,7 +58,7 @@ impl Heap {
         }
         let right: Vec<i64> = Vec::from(&self.slice[k..]);
         unsafe { self.slice.set_len(k) };
-        self = self.to_heap(true);
+        self = self.into_heap(true);
         for v in right.iter() {
             if &self.slice[0] <= v {
                 continue;
@@ -86,10 +89,10 @@ impl Heap {
     fn elder(&self, a: &i64, b: &i64) -> bool {
         let c = a - b;
         if c > 0 {
-            return self.is_max;
+            return self.is_max_heap;
         }
         if c < 0 {
-            return !self.is_max;
+            return !self.is_max_heap;
         }
         return false;
     }
@@ -123,7 +126,7 @@ impl Heap {
 }
 
 #[test]
-fn test_max_heap() {
+fn test_heap() {
     let max_heap = Heap::new(vec![16, 14, 10, 8, 7, 9, 3, 2, 4, 1], true);
     let h1 = Heap::new(vec![16, 14, 10, 8, 7, 9, 3, 2, 4, 1], true);
     assert_eq!(max_heap, h1);
@@ -136,7 +139,7 @@ fn test_max_heap() {
     let h4 = Heap::new(vec![10, 7, 2, 5, 1], true).add_node(16);
     assert_eq!(&max_heap, &h4);
 
-    let sort_h4 = h4.sort();
+    let sort_h4 = h4.sort(false);
     assert_eq!(vec![1, 2, 5, 7, 10, 16], sort_h4);
 
     let min_vec = Heap::new(vec![9, 14, 8, 7, 16, 3, 2, 10, 4, 1], true).find_min_k(5);
