@@ -20,6 +20,7 @@ impl Heap {
     fn swap_uncheck(&mut self, i: usize, j: usize) {
         self.0.swap(i - 1, j - 1)
     }
+    /// O(log(n)
     fn max_shift_down_uncheck(&mut self, i: usize) {
         let l = Self::left(i);
         let r = Self::right(i);
@@ -53,6 +54,7 @@ impl Heap {
         self.max_shift_down_uncheck(i);
         self
     }
+    /// O(log(n)
     fn max_shift_up_uncheck(&mut self, i: usize) {
         if i == 0 || i == 1 {
             return;
@@ -68,6 +70,17 @@ impl Heap {
         self.max_shift_up_uncheck(self.size());
         self
     }
+    /// O(nlog(n))
+    pub fn sort(mut self) -> Vec<i64> {
+        let raw_size = self.size();
+        while self.size() > 0 {
+            self.swap_uncheck(1, self.size());
+            unsafe { self.0.set_len(self.size() - 1) };
+            self = self.as_max_heap();
+        }
+        unsafe { self.0.set_len(raw_size) }
+        return self.0;
+    }
 }
 
 #[test]
@@ -82,5 +95,8 @@ fn test_max_heap() {
     let h3 = Heap(vec![16, 7, 10, 5, 1, 2]).as_max_heap();
     assert_eq!(max_heap, h3);
     let h4 = Heap(vec![10, 7, 2, 5, 1]).as_max_heap().add_node(16);
-    assert_eq!(max_heap, h4);
+    assert_eq!(&max_heap, &h4);
+
+    let sort_h4 = h4.sort();
+    assert_eq!(vec![1, 2, 5, 7, 10, 16], sort_h4);
 }
