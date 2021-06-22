@@ -25,10 +25,10 @@ impl Heap {
         let l = Self::left(i);
         let r = Self::right(i);
         let mut larget = i;
-        if l < self.size() && self.get_uncheck(l) > self.get_uncheck(i) {
+        if l <= self.size() && self.get_uncheck(l) > self.get_uncheck(i) {
             larget = l;
         }
-        if r < self.size() && self.get_uncheck(r) > self.get_uncheck(larget) {
+        if r <= self.size() && self.get_uncheck(r) > self.get_uncheck(larget) {
             larget = r;
         }
         if larget != i {
@@ -37,7 +37,7 @@ impl Heap {
         }
     }
     pub fn as_max_heap(mut self) -> Self {
-        for i in (1..(Self::parent(self.size()))).rev() {
+        for i in (1..=(Self::parent(self.size()))).rev() {
             self.max_shift_down_uncheck(i);
         }
         self
@@ -81,6 +81,22 @@ impl Heap {
         unsafe { self.0.set_len(raw_size) }
         return self.0;
     }
+    pub fn find_min_k(mut self, k: usize) -> Vec<i64> {
+        if k >= self.size() {
+            return self.0;
+        }
+        let right: Vec<i64> = Vec::from(&self.0[k..]);
+        unsafe { self.0.set_len(k) };
+        self = self.as_max_heap();
+        for v in right.iter() {
+            if &self.0[0] <= v {
+                continue
+            }
+            self.0[0] = v.clone();
+            self.max_shift_down_uncheck(1);
+        }
+        self.0
+    }
 }
 
 #[test]
@@ -99,4 +115,7 @@ fn test_max_heap() {
 
     let sort_h4 = h4.sort();
     assert_eq!(vec![1, 2, 5, 7, 10, 16], sort_h4);
+
+    let min_vec = Heap(vec![9, 14, 8, 7, 16, 3, 2, 10, 4, 1]).find_min_k(5);
+    assert_eq!(vec![7, 3, 4, 2, 1], min_vec);
 }
